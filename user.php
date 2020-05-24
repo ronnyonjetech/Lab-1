@@ -13,14 +13,16 @@
           //new variables included
           private $username;
           private $password;
+          private $profilePicture;
           
           
-          function __construct($first_name, $last_name, $city_name, $username, $password) {
+          function __construct($first_name, $last_name, $city_name, $username, $password,$profilePicture) {
                $this->first_name = $first_name;
                $this->last_name = $last_name;
                $this->city_name = $city_name;
                $this->username=$username;
                $this->password=$password;
+               $this->profilePicture=$profilePicture;
                
           }
             //lab 2 continuation
@@ -65,7 +67,8 @@
                $uname=$this->username;
                $this->hashPassword();
                $pass=$this->password;
-               $res = mysqli_query($con->conn, "INSERT INTO user(first_name, last_name, user_city,username,password) VALUES('$fn','$ln','$city','$uname','$pass')") or die("Error : " .mysqli_error($con->conn));
+               $pic=$this->profilePicture;
+               $res = mysqli_query($con->conn, "INSERT INTO user(first_name, last_name, user_city,username,password,profile) VALUES('$fn','$ln','$city','$uname','$pass','$pic')") or die("Error : " .mysqli_error($con->conn));
                $con->closeDatabase();
                return $res;
           }

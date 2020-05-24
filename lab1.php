@@ -1,5 +1,8 @@
 <?php	
 	include_once 'user.php';
+	include_once 'fileUploader.php';
+	include_once 'DBConnector.php';
+	$conn=new DBConnector;
 
 	if(isset($_POST['btn-save'])) {
 		$first_name = $_POST['first_name'];
@@ -7,9 +10,13 @@
 		$city = $_POST['city_name'];
 		$username=$_POST['username'];
 		$password=$_POST['password'];
+		$path=$_FILES["fileToUpload"]["name"];
+		
 
-		$user = new User($first_name, $last_name, $city,$username,$password);
-//this one is added for lab 2
+		$user = new User($first_name, $last_name, $city,$username,$password,$path);
+        $uploader=new FileUploader();//lab2 of 3
+		
+
         if (!$user->valiteForm()) {
         	$user->createFormErrorSessions();
         	header("Refresh:0");
@@ -19,13 +26,21 @@
 
 
 		$res = $user->save();
+		/*lab2part3*/
+		$file_upload_response=$uploader->uploadFile();
+		//check isf operation save took place
+		/*if ($res && $file_upload_response) {
+			echo "Save Operation was successful for file upload";
+		}else{
+			echo "save operation wasn't successful for file upload";
+		}
 		
 		if($res) {
 			echo "Save operation was successful";
 		} else {
 			echo "An error occured!";
-		}
-		$user->readAll();
+		}*/
+		//$user->readAll();
 	}
 
 
@@ -37,7 +52,7 @@
 	<link rel="stylesheet" type="text/css" href="validate.css">
 </head>
 <body>
-	<form method="POST" name="user_details" id="user_details" onsubmit="return validateForm()" action="<?=$_SERVER['PHP_SELF']  ?>">
+	<form method="POST" name="user_details" id="user_details" onsubmit="return validateForm()" action="<?=$_SERVER['PHP_SELF']  ?>"enctype="multipart/form-data">
 		<table align="center">
 			<tr>
 				<td><input type="text" name="first_name" required placeholder="First Name"/></td>
@@ -53,6 +68,9 @@
 			</tr>
 			<tr>
 				<td><input type="password" name="password"placeholder="password"/></td>
+			</tr>
+			<tr>
+				<td>Profile image:<input type="file" name="fileToUpload" id="fileToUpload"></td>
 			</tr>
 			<tr>
 				<td><button type="submit" name="btn-save"><strong>SAVE</strong></button></td>
